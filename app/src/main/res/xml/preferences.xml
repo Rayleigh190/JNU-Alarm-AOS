@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory android:title="일반">
+        <SwitchPreferenceCompat
+            app:key="basic"
+            app:title="기본 알림"
+            android:summary="서비스 관련한 기본 알림 입니다."/>
+
+        <SwitchPreferenceCompat
+            app:key="weather"
+            app:title="학교 날씨"
+            android:summary="매일 오전 8시에 학교 날씨를 알려드립니다."
+            android:enabled="false"/>
+
+        <SwitchPreferenceCompat
+            app:key="emergency"
+            app:title="긴급 알림"
+            android:summary="교내에서 발생하는 긴급한 상황을 알려드립니다.(안전/재난)"/>
+
+        <SwitchPreferenceCompat
+            app:key="ad"
+            app:title="홍보/마케팅"
+            android:summary="홍보/마케팅 알림입니다."/>
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="대학">
+        <SwitchPreferenceCompat
+            app:key="academic"
+            app:title="학사 알림"
+            android:summary="홈페이지 학사 게시판의 새 게시물을 알려드립니다."/>
+
+        <SwitchPreferenceCompat
+            app:key="scholarship"
+            app:title="장학 알림"
+            android:summary="홈페이지 장학 게시판의 새 게시물을 알려드립니다."/>
+
+        <Preference
+            android:key="college"
+            android:title="단과대 알림"
+            android:summary="각 단과대 홈페이지에 새 공지사항이 올라오면 알려드립니다." />
+
+        <Preference
+            android:key="department"
+            android:title="학과 알림"
+            android:summary="각 학과 홈페이지에 새 공지사항이 올라오면 알려드립니다." />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="기타">
+        <Preference
+            android:key="business"
+            android:title="사업단 알림"
+            android:summary="각 사업단 홈페이지에 새 공지사항이 올라오면 알려드립니다." />
+
+        <Preference
+            android:key="question"
+            android:title="문의 및 제안"/>
+    </PreferenceCategory>
+
+</androidx.preference.PreferenceScreen>

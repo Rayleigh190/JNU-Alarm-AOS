@@ -1,37 +1,28 @@
 package com.jnu_alarm.android.ui.settings;
 
 import android.os.Bundle;
+import android.preference.PreferenceFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavDirections;
+import androidx.navigation.Navigation;
+import androidx.preference.PreferenceFragmentCompat;
 
 import com.jnu_alarm.android.databinding.FragmentSettingsBinding;
+import com.jnu_alarm.android.R;
 
-public class SettingsFragment extends Fragment {
-
-    private FragmentSettingsBinding binding;
-
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        SettingsViewModel settingsViewModel =
-                new ViewModelProvider(this).get(SettingsViewModel.class);
-
-        binding = FragmentSettingsBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
-
-        final TextView textView = binding.textDashboard;
-        settingsViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
-        return root;
-    }
+public class SettingsFragment extends PreferenceFragmentCompat {
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
+    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        setPreferencesFromResource(R.xml.preferences, rootKey);
     }
 }
