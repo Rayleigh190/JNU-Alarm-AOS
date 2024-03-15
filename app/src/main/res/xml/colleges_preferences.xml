@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory android:title="일반">
+        <SwitchPreferenceCompat
+            app:key="test"
+            app:title="테스트 알림"
+            android:summary="테스트 알림 입니다."/>
+    </PreferenceCategory>
+
+</androidx.preference.PreferenceScreen>

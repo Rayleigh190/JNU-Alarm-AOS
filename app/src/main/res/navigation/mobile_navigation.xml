@@ -15,6 +15,16 @@
         android:id="@+id/navigation_settings"
         android:name="com.jnu_alarm.android.ui.settings.SettingsFragment"
         android:label="알림 설정"
-        tools:layout="@layout/fragment_settings" />
+        tools:layout="@layout/fragment_settings" >
+        <action
+            android:id="@+id/action_navigation_settings_to_navigation_colleges"
+            app:destination="@id/navigation_colleges" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_colleges"
+        android:name="com.jnu_alarm.android.ui.settings.CollegesFragment"
+        android:label="단과대 알림"
+        tools:layout="@layout/fragment_colleges" />
 
 </navigation>
