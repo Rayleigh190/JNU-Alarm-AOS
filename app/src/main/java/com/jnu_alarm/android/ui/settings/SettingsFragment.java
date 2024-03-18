@@ -18,5 +18,10 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             Navigation.findNavController(requireView()).navigate(R.id.action_navigation_settings_to_navigation_colleges);
             return true;
         });
+
+        findPreference("department").setOnPreferenceClickListener(preference -> {
+            Navigation.findNavController(requireView()).navigate(R.id.action_navigation_settings_to_navigation_departments);
+            return true;
+        });
     }
 }

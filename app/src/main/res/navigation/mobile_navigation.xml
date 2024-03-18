@@ -19,6 +19,9 @@
         <action
             android:id="@+id/action_navigation_settings_to_navigation_colleges"
             app:destination="@id/navigation_colleges" />
+        <action
+            android:id="@+id/action_navigation_settings_to_navigation_departments"
+            app:destination="@id/navigation_departments" />
     </fragment>
 
     <fragment
@@ -26,5 +29,11 @@
         android:name="com.jnu_alarm.android.ui.settings.CollegesFragment"
         android:label="단과대 알림"
         tools:layout="@layout/fragment_colleges" />
+
+    <fragment
+        android:id="@+id/navigation_departments"
+        android:name="com.jnu_alarm.android.ui.settings.DepartmentsFragment"
+        android:label="학과 알림"
+        tools:layout="@layout/fragment_departments" />
 
 </navigation>
