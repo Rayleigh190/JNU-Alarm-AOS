@@ -2,11 +2,71 @@
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory android:title="일반">
-        <SwitchPreferenceCompat
-            app:key="test"
-            app:title="테스트 알림"
-            android:summary="테스트 알림 입니다."/>
-    </PreferenceCategory>
+    <SwitchPreferenceCompat
+        app:key="cba"
+        app:title="경영대학"
+        android:icon="@drawable/ic_baseline_account_balance_24dp" />
+    <SwitchPreferenceCompat
+        app:key="eng"
+        app:title="공과대학"
+        android:icon="@drawable/ic_baseline_account_balance_24dp" />
+    <SwitchPreferenceCompat
+        app:key="agric"
+        app:title="농업생명과학대학"
+        android:icon="@drawable/ic_baseline_account_balance_24dp" />
+    <SwitchPreferenceCompat
+        app:key="education"
+        app:title="사범대학"
+        android:icon="@drawable/ic_baseline_account_balance_24dp" />
+    <SwitchPreferenceCompat
+        app:key="socsci"
+        app:title="사회과학대학"
+        android:icon="@drawable/ic_baseline_account_balance_24dp" />
+    <SwitchPreferenceCompat
+        app:key="humanecology"
+        app:title="생활과학대학"
+        android:icon="@drawable/ic_baseline_account_balance_24dp" />
+    <SwitchPreferenceCompat
+        app:key="vetmed"
+        app:title="수의과대학"
+        android:icon="@drawable/ic_baseline_account_balance_24dp" />
+    <SwitchPreferenceCompat
+        app:key="pharmacy"
+        app:title="약학대학"
+        android:icon="@drawable/ic_baseline_account_balance_24dp" />
+    <SwitchPreferenceCompat
+        app:key="arts"
+        app:title="예술대학"
+        android:icon="@drawable/ic_baseline_account_balance_24dp" />
+    <SwitchPreferenceCompat
+        app:key="medicine"
+        app:title="의과대학"
+        android:summary="서비스 준비중입니다."
+        android:enabled="false"
+        android:icon="@drawable/ic_baseline_account_balance_24dp" />
+    <SwitchPreferenceCompat
+        app:key="human"
+        app:title="인문대학"
+        android:icon="@drawable/ic_baseline_account_balance_24dp" />
+    <SwitchPreferenceCompat
+        app:key="natural"
+        app:title="자연과학대학"
+        android:icon="@drawable/ic_baseline_account_balance_24dp" />
+    <SwitchPreferenceCompat
+        app:key="cvg"
+        app:title="AI융합대학"
+        android:icon="@drawable/ic_baseline_account_balance_24dp" />
+    <SwitchPreferenceCompat
+        app:key="engc"
+        app:title="공학대학"
+        android:icon="@drawable/ic_baseline_account_balance_24dp" />
+    <SwitchPreferenceCompat
+        app:key="yculture"
+        app:title="문화사회과학대학"
+        android:icon="@drawable/ic_baseline_account_balance_24dp" />
+    <SwitchPreferenceCompat
+        app:key="sea"
+        app:title="수산해양대학"
+        android:icon="@drawable/ic_baseline_account_balance_24dp" />
 
 </androidx.preference.PreferenceScreen>

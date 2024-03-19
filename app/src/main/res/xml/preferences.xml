@@ -58,4 +58,10 @@
             android:title="문의 및 제안"/>
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="개발자 모드">
+        <SwitchPreferenceCompat
+            app:key="test"
+            app:title="테스트 알림" />
+    </PreferenceCategory>
+
 </androidx.preference.PreferenceScreen>
