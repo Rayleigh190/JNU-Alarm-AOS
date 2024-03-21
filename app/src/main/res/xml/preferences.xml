@@ -7,7 +7,7 @@
             app:key="basic"
             app:title="기본 알림"
             android:summary="서비스 관련한 기본 알림 입니다."
-            android:enabled="false"
+            android:enabled="true"
             android:icon="@drawable/setting_ic_round_announcement_24"/>
 
         <SwitchPreferenceCompat
