@@ -23,5 +23,10 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             Navigation.findNavController(requireView()).navigate(R.id.action_navigation_settings_to_navigation_departments);
             return true;
         });
+
+        findPreference("business").setOnPreferenceClickListener(preference -> {
+            Navigation.findNavController(requireView()).navigate(R.id.action_navigation_settings_to_navigation_business);
+            return true;
+        });
     }
 }
