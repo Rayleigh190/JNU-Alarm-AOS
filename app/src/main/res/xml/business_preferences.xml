@@ -3,8 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <SwitchPreferenceCompat
-        app:key="test"
-        app:title="테스트 알림"
+        app:key="sojoong"
+        app:title="소프트웨어중심대학사업단"
+        android:icon="@drawable/setting_ic_round_business_24" />
+    <SwitchPreferenceCompat
+        app:key="aicoss"
+        app:title="인공지능혁신융합대학사업단"
         android:icon="@drawable/setting_ic_round_business_24" />
 
 </androidx.preference.PreferenceScreen>
