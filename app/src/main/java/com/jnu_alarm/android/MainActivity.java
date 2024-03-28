@@ -27,13 +27,26 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.preference.PreferenceManager;
 
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.jnu_alarm.android.api.ApiClient;
+import com.jnu_alarm.android.api.ApiResponse;
+import com.jnu_alarm.android.api.ApiService;
+import com.jnu_alarm.android.data.NotificationData;
+import com.jnu_alarm.android.data.SubscriptionData;
 import com.jnu_alarm.android.databinding.ActivityMainBinding;
+
+import java.util.Arrays;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String TAG = "MainActivity";
     private ActivityMainBinding binding;
     private NavController navController;
     private AppBarConfiguration appBarConfiguration;
+    private ApiService apiService;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,6 +105,58 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                         Toast.makeText(MainActivity.this, "FCM 등록 완료", Toast.LENGTH_SHORT).show();
                     }
                 });
+
+        fetchNotifications();
+    }
+
+    public void fetchNotifications() {
+        apiService = ApiClient.getClient().create(ApiService.class);
+
+        // 예시 데이터 생성
+        String deviceId = "001";
+        List<String> subscribedTopics = Arrays.asList("chem", "mse");
+        SubscriptionData subscriptionData = new SubscriptionData(deviceId, subscribedTopics);
+
+        // POST 요청 보내기
+        Call<ApiResponse> call = apiService.postData(subscriptionData);
+        call.enqueue(new Callback<ApiResponse>() {
+            @Override
+            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+                if (response.isSuccessful()) {
+                    ApiResponse apiResponse = response.body();
+                    if (apiResponse != null && apiResponse.isSuccess()) {
+                        List<NotificationData> notifications = apiResponse.getNotifications();
+                        if (notifications != null && !notifications.isEmpty()) {
+                            // 첫 번째 알림 정보 가져오기
+                            NotificationData firstNotification = notifications.get(0);
+                            String title = firstNotification.getTitle();
+                            String body = firstNotification.getBody();
+                            String link = firstNotification.getLink();
+                            String createdAt = firstNotification.getCreatedAt();
+
+                            // 출력하거나 처리하기
+                            Log.d("MainActivity", "알림 제목: " + title);
+                            Log.d("MainActivity", "알림 내용: " + body);
+                            Log.d("MainActivity", "알림 링크: " + link);
+                            Log.d("MainActivity", "알림 생성일: " + createdAt);
+                        } else {
+                            Log.d("MainActivity", "알림이 없습니다.");
+                        }
+                    } else {
+                        Log.e("MainActivity", "응답 처리 실패");
+                    }
+                } else {
+                    Log.e("MainActivity", "POST 요청 실패");
+                    // 요청 실패 처리
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse> call, Throwable t) {
+                Log.e("MainActivity", "네트워크 오류: " + t.getMessage());
+                // 네트워크 오류 등 요청 실패 시 처리
+            }
+        });
     }
 
     // navigate up 버튼으로 뒤로가기 설정
