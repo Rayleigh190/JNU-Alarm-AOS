@@ -1,7 +1,17 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.androidApplication)
     // Add the Google services Gradle plugin
     id("com.google.gms.google-services")
+}
+
+fun getLocalProperty(propertyName: String): String {
+    val localPropertiesFile = project.file("../local.properties")
+    val localProperties = Properties()
+    localProperties.load(FileInputStream(localPropertiesFile))
+    return localProperties.getProperty(propertyName)
 }
 
 android {
@@ -16,6 +26,8 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "BASE_URL", getLocalProperty("BASE_URL"))
     }
 
     buildTypes {
@@ -33,6 +45,7 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 }
 
