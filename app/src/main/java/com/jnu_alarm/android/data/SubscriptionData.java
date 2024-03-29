@@ -11,8 +11,12 @@ public class SubscriptionData {
     @SerializedName("subscribed_topics")
     private List<String> subscribedTopics;
 
+    @SerializedName("is_iOS")
+    private Boolean is_iOS;
+
     public SubscriptionData(String deviceId, List<String> subscribedTopics) {
         this.deviceId = deviceId;
         this.subscribedTopics = subscribedTopics;
+        this.is_iOS = false;
     }
 }

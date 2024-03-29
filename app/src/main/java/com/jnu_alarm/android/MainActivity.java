@@ -1,6 +1,7 @@
 package com.jnu_alarm.android;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -26,7 +27,9 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.preference.PreferenceManager;
 
+import com.google.common.reflect.TypeToken;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.gson.Gson;
 import com.jnu_alarm.android.api.ApiClient;
 import com.jnu_alarm.android.api.ApiResponse;
 import com.jnu_alarm.android.api.ApiService;
@@ -34,6 +37,8 @@ import com.jnu_alarm.android.data.NotificationData;
 import com.jnu_alarm.android.data.SubscriptionData;
 import com.jnu_alarm.android.databinding.ActivityMainBinding;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -47,12 +52,28 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private NavController navController;
     private AppBarConfiguration appBarConfiguration;
     private ApiService apiService;
+    private ArrayList<String> subscribedList = new ArrayList<>();
+    private Boolean onResumeFlag = false;
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (onResumeFlag) {
+            // 백그라운드에서 포그라운드로 왔을때만 실행합니다.
+            Log.d(TAG, "onResume()");
+            fetchNotifications();
+            onResumeFlag = false;
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // 알림 권한 요청 Start
         askNotificationPermission();
         // 알림 권한 요청 End
+
+        // 구독한 토픽(key) 목록을 가져옵니다.
+        subscribedList = getListFromSharedPreferences(getApplicationContext());
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -71,14 +92,22 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
             @Override
             public void onDestinationChanged(@NonNull NavController controller, @NonNull NavDestination destination, @Nullable Bundle arguments) {
-                // 바텀 네비게이션이 표시되는 Fragment
+                Log.d(TAG, String.valueOf(destination.getLabel()));
                 if (destination.getId() == R.id.navigation_settings || destination.getId() == R.id.navigation_notifications) {
+                    // 바텀 네비게이션이 표시되는 Fragment
                     binding.navView.setVisibility(View.VISIBLE);
                 }
-                // 바텀 네비게이션이 표시되지 않는 Fragment
                 else {
+                    // 바텀 네비게이션이 표시되지 않는 Fragment
                     binding.navView.setVisibility(View.GONE);
                 }
+
+                if (destination.getId() == R.id.navigation_notifications && onResumeFlag == false) {
+                    // 첫 실행과 navigation 이동 시에만 실행합니다.
+                    Log.d(TAG, "navigation_notifications");
+                    fetchNotifications();
+                }
+
             }
         });
 
@@ -105,8 +134,12 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                         Toast.makeText(MainActivity.this, "FCM 등록 완료", Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
 
-        fetchNotifications();
+    @Override
+    protected void onPause() {
+        super.onPause();
+        onResumeFlag = true;
     }
 
     public void fetchNotifications() {
@@ -114,7 +147,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         // 예시 데이터 생성
         String deviceId = "001";
-        List<String> subscribedTopics = Arrays.asList("chem", "mse");
+        List<String> subscribedTopics = getListFromSharedPreferences(getApplicationContext());
         SubscriptionData subscriptionData = new SubscriptionData(deviceId, subscribedTopics);
 
         // POST 요청 보내기
@@ -168,6 +201,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     // 설정 값이 변했을 때 실행
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, @Nullable String key) {
+        if (key=="notifications") {return;}
         Log.v(TAG, key);
         if (key != null && sharedPreferences.getBoolean(key, false)) {
             FirebaseMessaging.getInstance().subscribeToTopic(key)
@@ -178,7 +212,12 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                             if (!task.isSuccessful()) {
                                 msg = "Subscribe failed";
                                 sharedPreferences.edit().putBoolean(key, false).apply();
+                            } else {
+                                // 구독한 key를 ArrayList와 SharedPreferences에 저장 합니다.
+                                subscribedList.add(key);
+                                saveListToSharedPreferences(getApplicationContext(), subscribedList);
                             }
+                            Log.d(TAG, subscribedList.toString());
                             Log.d(TAG, msg);
                             Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
                             // 여기에서 새로고침하고싶어.
@@ -193,13 +232,42 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                             if (!task.isSuccessful()) {
                                 msg = "Unsubscribe failed";
                                 sharedPreferences.edit().putBoolean(key, true).apply();
+                            } else {
+                                // 구독 취소한 key를 ArrayList와 SharedPreferences에서 제거 합니다.
+                                if (subscribedList.contains(key)) {
+                                    subscribedList.remove(key);
+                                }
+                                // 변경된 리스트를 SharedPreferences에 저장합니다.
+                                saveListToSharedPreferences(getApplicationContext(), subscribedList);
                             }
+                            Log.d(TAG, subscribedList.toString());
                             Log.d(TAG, msg);
                             Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
                         }
                     });
         }
+    }
 
+    // SharedPreferences에 리스트 데이터를 저장하는 메서드
+    private void saveListToSharedPreferences(Context context, List<String> myList) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("notifications", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        Gson gson = new Gson();
+        String json = gson.toJson(myList);
+
+        editor.putString("data", json);
+        editor.apply();
+    }
+
+    // SharedPreferences에서 리스트 데이터를 불러오는 메서드
+    private ArrayList<String> getListFromSharedPreferences(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("notifications", Context.MODE_PRIVATE);
+        String json = sharedPreferences.getString("data", null);
+
+        Type type = new TypeToken<List<String>>() {}.getType();
+        Gson gson = new Gson();
+        return gson.fromJson(json, type);
     }
 
     // [START ask_post_notifications]
