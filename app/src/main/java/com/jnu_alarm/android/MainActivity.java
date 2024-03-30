@@ -52,18 +52,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private NavController navController;
     private AppBarConfiguration appBarConfiguration;
     private ApiService apiService;
-    private ArrayList<String> subscribedList = new ArrayList<>();
-    private Boolean onResumeFlag = false;
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (onResumeFlag) {
-            // 백그라운드에서 포그라운드로 왔을때만 실행합니다.
-            Log.d(TAG, "onResume()");
-            fetchNotifications();
-            onResumeFlag = false;
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,9 +59,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         // 알림 권한 요청 Start
         askNotificationPermission();
         // 알림 권한 요청 End
-
-        // 구독한 토픽(key) 목록을 가져옵니다.
-        subscribedList = getListFromSharedPreferences(getApplicationContext());
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -101,13 +86,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                     // 바텀 네비게이션이 표시되지 않는 Fragment
                     binding.navView.setVisibility(View.GONE);
                 }
-
-                if (destination.getId() == R.id.navigation_notifications && onResumeFlag == false) {
-                    // 첫 실행과 navigation 이동 시에만 실행합니다.
-                    Log.d(TAG, "navigation_notifications");
-                    fetchNotifications();
-                }
-
             }
         });
 
@@ -136,62 +114,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 });
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        onResumeFlag = true;
-    }
-
-    public void fetchNotifications() {
-        apiService = ApiClient.getClient().create(ApiService.class);
-
-        // 예시 데이터 생성
-        String deviceId = "001";
-        List<String> subscribedTopics = getListFromSharedPreferences(getApplicationContext());
-        SubscriptionData subscriptionData = new SubscriptionData(deviceId, subscribedTopics);
-
-        // POST 요청 보내기
-        Call<ApiResponse> call = apiService.postData(subscriptionData);
-        call.enqueue(new Callback<ApiResponse>() {
-            @Override
-            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
-                if (response.isSuccessful()) {
-                    ApiResponse apiResponse = response.body();
-                    if (apiResponse != null && apiResponse.isSuccess()) {
-                        List<NotificationData> notifications = apiResponse.getNotifications();
-                        if (notifications != null && !notifications.isEmpty()) {
-                            // 첫 번째 알림 정보 가져오기
-                            NotificationData firstNotification = notifications.get(0);
-                            String title = firstNotification.getTitle();
-                            String body = firstNotification.getBody();
-                            String link = firstNotification.getLink();
-                            String createdAt = firstNotification.getCreatedAt();
-
-                            // 출력하거나 처리하기
-                            Log.d("MainActivity", "알림 제목: " + title);
-                            Log.d("MainActivity", "알림 내용: " + body);
-                            Log.d("MainActivity", "알림 링크: " + link);
-                            Log.d("MainActivity", "알림 생성일: " + createdAt);
-                        } else {
-                            Log.d("MainActivity", "알림이 없습니다.");
-                        }
-                    } else {
-                        Log.e("MainActivity", "응답 처리 실패");
-                    }
-                } else {
-                    Log.e("MainActivity", "POST 요청 실패");
-                    // 요청 실패 처리
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ApiResponse> call, Throwable t) {
-                Log.e("MainActivity", "네트워크 오류: " + t.getMessage());
-                // 네트워크 오류 등 요청 실패 시 처리
-            }
-        });
-    }
-
     // navigate up 버튼으로 뒤로가기 설정
     @Override
     public boolean onSupportNavigateUp() {
@@ -202,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, @Nullable String key) {
         if (key=="notifications") {return;}
-        Log.v(TAG, key);
+        Log.v(TAG, "선택한 설정: " + key);
         if (key != null && sharedPreferences.getBoolean(key, false)) {
             FirebaseMessaging.getInstance().subscribeToTopic(key)
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -213,14 +135,14 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                                 msg = "Subscribe failed";
                                 sharedPreferences.edit().putBoolean(key, false).apply();
                             } else {
-                                // 구독한 key를 ArrayList와 SharedPreferences에 저장 합니다.
+                                // 구독한 key를 SharedPreferences에 저장 합니다.
+                                ArrayList subscribedList = getListFromSharedPreferences(getApplicationContext());
                                 subscribedList.add(key);
                                 saveListToSharedPreferences(getApplicationContext(), subscribedList);
                             }
-                            Log.d(TAG, subscribedList.toString());
+                            Log.d(TAG, "전체 설정" + getListFromSharedPreferences(getApplicationContext()).toString());
                             Log.d(TAG, msg);
                             Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
-                            // 여기에서 새로고침하고싶어.
                         }
                     });
         } else {
@@ -233,14 +155,14 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                                 msg = "Unsubscribe failed";
                                 sharedPreferences.edit().putBoolean(key, true).apply();
                             } else {
-                                // 구독 취소한 key를 ArrayList와 SharedPreferences에서 제거 합니다.
+                                // 구독 취소한 key를 SharedPreferences에서 제거 합니다.
+                                ArrayList subscribedList = getListFromSharedPreferences(getApplicationContext());
                                 if (subscribedList.contains(key)) {
                                     subscribedList.remove(key);
                                 }
-                                // 변경된 리스트를 SharedPreferences에 저장합니다.
                                 saveListToSharedPreferences(getApplicationContext(), subscribedList);
                             }
-                            Log.d(TAG, subscribedList.toString());
+                            Log.d(TAG, "전체 설정" + getListFromSharedPreferences(getApplicationContext()).toString());
                             Log.d(TAG, msg);
                             Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
                         }

@@ -2,14 +2,14 @@ package com.jnu_alarm.android.api;
 import com.google.gson.annotations.SerializedName;
 import com.jnu_alarm.android.data.NotificationData;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public class ApiResponse {
     @SerializedName("success")
     private boolean success;
 
     @SerializedName("response")
-    private List<NotificationData> notifications;
+    private ArrayList<NotificationData> notifications;
 
     @SerializedName("error")
     private String error;
@@ -18,7 +18,7 @@ public class ApiResponse {
         return success;
     }
 
-    public List<NotificationData> getNotifications() {
+    public ArrayList<NotificationData> getNotifications() {
         return notifications;
     }
 

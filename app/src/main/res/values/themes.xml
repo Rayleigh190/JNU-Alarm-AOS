@@ -15,8 +15,13 @@
         <item name="colorAccent">#0481FF</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="toolbarStyle">@style/CustomToolBar</item>
+        <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
     </style>
     <style name="CustomToolBar" parent="@style/Widget.AppCompat.Toolbar">
         <item name="titleTextColor">@color/black</item>
+    </style>
+    <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
+        <item name="spinBars">true</item>
+        <item name="color">@color/black</item>
     </style>
 </resources>
