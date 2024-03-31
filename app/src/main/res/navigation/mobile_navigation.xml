@@ -25,6 +25,9 @@
         <action
             android:id="@+id/action_navigation_settings_to_navigation_business"
             app:destination="@id/navigation_business" />
+        <action
+            android:id="@+id/action_navigation_settings_to_navigation_contact"
+            app:destination="@id/navigation_contact" />
     </fragment>
 
     <fragment
@@ -44,5 +47,11 @@
         android:name="com.jnu_alarm.android.ui.settings.BusinessFragment"
         android:label="사업단 알림"
         tools:layout="@layout/fragment_business" />
+
+    <fragment
+        android:id="@+id/navigation_contact"
+        android:name="com.jnu_alarm.android.ui.settings.ContactFragment"
+        android:label="문의 및 제안"
+        tools:layout="@layout/fragment_contact" />
 
 </navigation>

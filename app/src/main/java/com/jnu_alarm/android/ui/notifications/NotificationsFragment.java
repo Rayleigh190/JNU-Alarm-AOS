@@ -18,7 +18,7 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.jnu_alarm.android.R;
 import com.jnu_alarm.android.api.ApiClient;
-import com.jnu_alarm.android.api.ApiResponse;
+import com.jnu_alarm.android.api.response.NotificationApiResponse;
 import com.jnu_alarm.android.api.ApiService;
 import com.jnu_alarm.android.data.NotificationData;
 import com.jnu_alarm.android.data.SubscriptionData;
@@ -94,14 +94,14 @@ public class NotificationsFragment extends Fragment {
         SubscriptionData subscriptionData = new SubscriptionData(deviceId, subscribedTopics);
 
         // POST 요청 보내기
-        Call<ApiResponse> call = apiService.postData(subscriptionData);
-        call.enqueue(new Callback<ApiResponse>() {
+        Call<NotificationApiResponse> call = apiService.postNotification(subscriptionData);
+        call.enqueue(new Callback<NotificationApiResponse>() {
             @Override
-            public void onResponse(Call<ApiResponse> call, Response<ApiResponse> response) {
+            public void onResponse(Call<NotificationApiResponse> call, Response<NotificationApiResponse> response) {
                 if (response.isSuccessful()) {
-                    ApiResponse apiResponse = response.body();
-                    if (apiResponse != null && apiResponse.isSuccess()) {
-                        List<NotificationData> notifications = apiResponse.getNotifications();
+                    NotificationApiResponse notificationApiResponse = response.body();
+                    if (notificationApiResponse != null && notificationApiResponse.isSuccess()) {
+                        List<NotificationData> notifications = notificationApiResponse.getNotifications();
                         if (notifications != null && !notifications.isEmpty()) {
                             Log.d(TAG, "알림내역: " + notifications.size());
                             // 리사이클러뷰에 응답 데이터 적용
@@ -117,11 +117,12 @@ public class NotificationsFragment extends Fragment {
                 } else {
                     Log.e(TAG, "POST 요청 실패");
                     // 요청 실패 처리
+                    Log.d(TAG, response.toString());
                 }
             }
 
             @Override
-            public void onFailure(Call<ApiResponse> call, Throwable t) {
+            public void onFailure(Call<NotificationApiResponse> call, Throwable t) {
                 Log.e(TAG, "네트워크 오류: " + t.getMessage());
                 // 네트워크 오류 등 요청 실패 시 처리
             }
@@ -135,6 +136,11 @@ public class NotificationsFragment extends Fragment {
 
         Type type = new TypeToken<List<String>>() {}.getType();
         Gson gson = new Gson();
-        return gson.fromJson(json, type);
+
+        ArrayList<String> list = gson.fromJson(json, type);
+        if (list == null) {
+            list = new ArrayList<>(); // 기본값으로 빈 ArrayList를 생성
+        }
+        return list;
     }
 }

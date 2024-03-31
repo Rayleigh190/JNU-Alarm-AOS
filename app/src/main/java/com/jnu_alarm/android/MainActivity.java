@@ -30,21 +30,12 @@ import androidx.preference.PreferenceManager;
 import com.google.common.reflect.TypeToken;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
-import com.jnu_alarm.android.api.ApiClient;
-import com.jnu_alarm.android.api.ApiResponse;
 import com.jnu_alarm.android.api.ApiService;
-import com.jnu_alarm.android.data.NotificationData;
-import com.jnu_alarm.android.data.SubscriptionData;
 import com.jnu_alarm.android.databinding.ActivityMainBinding;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String TAG = "MainActivity";
@@ -189,7 +180,12 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         Type type = new TypeToken<List<String>>() {}.getType();
         Gson gson = new Gson();
-        return gson.fromJson(json, type);
+
+        ArrayList<String> list = gson.fromJson(json, type);
+        if (list == null) {
+            list = new ArrayList<>(); // 기본값으로 빈 ArrayList를 생성
+        }
+        return list;
     }
 
     // [START ask_post_notifications]

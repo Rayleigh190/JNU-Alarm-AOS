@@ -51,7 +51,7 @@
             android:icon="@drawable/setting_ic_round_business_24" />
 
         <Preference
-            android:key="question"
+            android:key="contact"
             android:title="문의 및 제안"
             android:icon="@drawable/setting_ic_round_phone_in_talk_24"/>
     </PreferenceCategory>

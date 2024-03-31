@@ -1,10 +1,10 @@
-package com.jnu_alarm.android.api;
+package com.jnu_alarm.android.api.response;
 import com.google.gson.annotations.SerializedName;
 import com.jnu_alarm.android.data.NotificationData;
 
 import java.util.ArrayList;
 
-public class ApiResponse {
+public class NotificationApiResponse {
     @SerializedName("success")
     private boolean success;
 
@@ -26,4 +26,3 @@ public class ApiResponse {
         return error;
     }
 }
-
