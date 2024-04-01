@@ -102,14 +102,15 @@ public class NotificationsFragment extends Fragment {
                     NotificationApiResponse notificationApiResponse = response.body();
                     if (notificationApiResponse != null && notificationApiResponse.isSuccess()) {
                         List<NotificationData> notifications = notificationApiResponse.getNotifications();
-                        if (notifications != null && !notifications.isEmpty()) {
-                            Log.d(TAG, "알림내역: " + notifications.size());
-                            // 리사이클러뷰에 응답 데이터 적용
-                            notificationDataList = (ArrayList<NotificationData>) notifications;
-                            NotificationsListAdapter adapter = new NotificationsListAdapter(notificationDataList);
-                            recyclerView.setAdapter(adapter);
-                        } else {
+                        Log.d(TAG, "알림내역: " + notifications.size());
+                        recyclerView.setVisibility(View.VISIBLE);
+                        // 리사이클러뷰에 응답 데이터 적용
+                        notificationDataList = (ArrayList<NotificationData>) notifications;
+                        NotificationsListAdapter adapter = new NotificationsListAdapter(notificationDataList);
+                        recyclerView.setAdapter(adapter);
+                        if(notifications.isEmpty()) {
                             Log.d(TAG, "알림이 없습니다.");
+                            recyclerView.setVisibility(View.GONE);
                         }
                     } else {
                         Log.e(TAG, "응답 처리 실패");
