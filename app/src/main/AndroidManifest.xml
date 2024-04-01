@@ -40,6 +40,15 @@
         <meta-data
             android:name="firebase_analytics_collection_enabled"
             android:value="false" />
+        <!-- admob -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-4183402691727093~2916999222" />
+        <property
+            android:name="android.adservices.AD_SERVICES_CONFIG"
+            android:resource="@xml/gma_ad_services_config"
+            tools:replace="android:resource" />
+
     </application>
 
 </manifest>
