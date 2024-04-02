@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/url_copy_menu"
+        android:title="링크 복사"/>
+
+    <item
+        android:id="@+id/url_share_menu"
+        android:title="다른 앱으로 공유" />
+
+    <item
+        android:id="@+id/url_open_menu"
+        android:title="다른 브라우저로 열기" />
+
+</menu>
