@@ -12,7 +12,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.jnu_alarm.android.R;
 import com.jnu_alarm.android.data.NotificationData;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 public class NotificationsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int VIEW_TYPE_HEADER = 0;
@@ -33,11 +37,13 @@ public class NotificationsListAdapter extends RecyclerView.Adapter<RecyclerView.
     class ViewHolder extends RecyclerView.ViewHolder {
         TextView titleTextView;
         TextView subTitleTextView;
+        TextView dateTextView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             titleTextView = itemView.findViewById(R.id.textTitle);
             subTitleTextView = itemView.findViewById(R.id.textSubTitle);
+            dateTextView = itemView.findViewById(R.id.date_text);
 
             // 아이템 클릭 리스너 설정
             itemView.setOnClickListener(v -> {
@@ -83,13 +89,27 @@ public class NotificationsListAdapter extends RecyclerView.Adapter<RecyclerView.
             ViewHolder itemViewHolder = (ViewHolder) holder;
             String title = mData.get(position - 1).getTitle(); // Subtract 1 for header
             String subTitle = mData.get(position - 1).getBody();
-            itemViewHolder.titleTextView.setText(title);
-            itemViewHolder.subTitleTextView.setText(subTitle);
+
+            // Parse date string
+            String dateString = mData.get(position - 1).getCreatedAt();
+            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSXXX", Locale.getDefault());
+            SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy.MM.dd", Locale.getDefault());
+            try {
+                Date date = inputFormat.parse(dateString);
+                String formattedDate = outputFormat.format(date);
+                itemViewHolder.titleTextView.setText(title);
+                itemViewHolder.subTitleTextView.setText(subTitle);
+                itemViewHolder.dateTextView.setText(formattedDate);
+            } catch (ParseException e) {
+                e.printStackTrace();
+                // Handle parsing exception
+            }
         } else if (holder instanceof HeaderViewHolder) {
             HeaderViewHolder headerViewHolder = (HeaderViewHolder) holder;
             headerViewHolder.headerTextView.setText("최대 20개의 알림 내역이 제공됩니다.");
         }
     }
+
 
     @Override
     public int getItemCount() {
