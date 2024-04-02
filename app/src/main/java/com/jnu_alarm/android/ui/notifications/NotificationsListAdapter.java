@@ -1,7 +1,6 @@
 package com.jnu_alarm.android.ui.notifications;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,17 +14,18 @@ import com.jnu_alarm.android.data.NotificationData;
 
 import java.util.ArrayList;
 
-public class NotificationsListAdapter extends RecyclerView.Adapter<NotificationsListAdapter.ViewHolder> {
+public class NotificationsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private static final int VIEW_TYPE_HEADER = 0;
+    private static final int VIEW_TYPE_ITEM = 1;
+
     private ArrayList<NotificationData> mData = null;
     private OnItemClickListener onItemClickListener; // 클릭 리스너 인터페이스
 
     // 인터페이스 정의
-    // 인터페이스 정의: 클릭 이벤트 리스너
     public interface OnItemClickListener {
         void onItemClick(NotificationData data);
     }
 
-    // 클릭 리스너 설정 메서드
     public void setOnItemClickListener(OnItemClickListener listener) {
         onItemClickListener = listener;
     }
@@ -33,50 +33,72 @@ public class NotificationsListAdapter extends RecyclerView.Adapter<Notifications
     class ViewHolder extends RecyclerView.ViewHolder {
         TextView titleTextView;
         TextView subTitleTextView;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             titleTextView = itemView.findViewById(R.id.textTitle);
             subTitleTextView = itemView.findViewById(R.id.textSubTitle);
 
             // 아이템 클릭 리스너 설정
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int position = getAdapterPosition();
-                    if (position != RecyclerView.NO_POSITION && onItemClickListener != null) {
-                        onItemClickListener.onItemClick(mData.get(position));
-                    }
+            itemView.setOnClickListener(v -> {
+                int position = getAdapterPosition();
+                if (position != RecyclerView.NO_POSITION && onItemClickListener != null) {
+                    onItemClickListener.onItemClick(mData.get(position - 1)); // Subtract 1 for header
                 }
             });
         }
     }
 
-    NotificationsListAdapter(ArrayList list) {
+    class HeaderViewHolder extends RecyclerView.ViewHolder {
+        TextView headerTextView;
+
+        public HeaderViewHolder(@NonNull View itemView) {
+            super(itemView);
+            headerTextView = itemView.findViewById(R.id.header_text);
+        }
+    }
+
+    NotificationsListAdapter(ArrayList<NotificationData> list) {
         mData = list;
     }
 
     @NonNull
     @Override
-    public NotificationsListAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        Context context = parent.getContext() ;
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) ;
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        Context context = parent.getContext();
+        LayoutInflater inflater = LayoutInflater.from(context);
 
-        View view = inflater.inflate(R.layout.notification_item, parent, false) ;
-        NotificationsListAdapter.ViewHolder vh = new NotificationsListAdapter.ViewHolder(view) ;
-
-        return vh ;
+        if (viewType == VIEW_TYPE_HEADER) {
+            View headerView = inflater.inflate(R.layout.notification_header_item, parent, false);
+            return new HeaderViewHolder(headerView);
+        } else {
+            View itemView = inflater.inflate(R.layout.notification_item, parent, false);
+            return new ViewHolder(itemView);
+        }
     }
 
     @Override
-    public void onBindViewHolder(@NonNull NotificationsListAdapter.ViewHolder holder, int position) {
-        String title = mData.get(position).getTitle();
-        String subTitle = mData.get(position).getBody();
-        holder.titleTextView.setText(title);
-        holder.subTitleTextView.setText(subTitle);
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        if (holder instanceof ViewHolder) {
+            ViewHolder itemViewHolder = (ViewHolder) holder;
+            String title = mData.get(position - 1).getTitle(); // Subtract 1 for header
+            String subTitle = mData.get(position - 1).getBody();
+            itemViewHolder.titleTextView.setText(title);
+            itemViewHolder.subTitleTextView.setText(subTitle);
+        } else if (holder instanceof HeaderViewHolder) {
+            HeaderViewHolder headerViewHolder = (HeaderViewHolder) holder;
+            headerViewHolder.headerTextView.setText("최대 20개의 알림 내역이 제공됩니다.");
+        }
     }
 
     @Override
     public int getItemCount() {
-        return mData.size();
+        // Add 1 for the header view
+        return mData.size() + 1;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position == 0 ? VIEW_TYPE_HEADER : VIEW_TYPE_ITEM;
     }
 }
