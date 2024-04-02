@@ -1,6 +1,7 @@
 package com.jnu_alarm.android.ui.notifications;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,7 +17,9 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
+import com.jnu_alarm.android.MainActivity;
 import com.jnu_alarm.android.R;
+import com.jnu_alarm.android.WebActivity;
 import com.jnu_alarm.android.api.ApiClient;
 import com.jnu_alarm.android.api.response.NotificationApiResponse;
 import com.jnu_alarm.android.api.ApiService;
@@ -107,6 +110,17 @@ public class NotificationsFragment extends Fragment {
                         // 리사이클러뷰에 응답 데이터 적용
                         notificationDataList = (ArrayList<NotificationData>) notifications;
                         NotificationsListAdapter adapter = new NotificationsListAdapter(notificationDataList);
+                        // 클릭 이벤트 처리
+                        adapter.setOnItemClickListener(new NotificationsListAdapter.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(NotificationData data) {
+                                Log.d(TAG, "Clicked item: " + data.getLink());
+                                Intent intent = new Intent(getContext(), WebActivity.class);
+                                intent.putExtra("link", data.getLink());
+                                intent.putExtra("title", data.getTitle());
+                                startActivity(intent);
+                            }
+                        });
                         recyclerView.setAdapter(adapter);
                         if(notifications.isEmpty()) {
                             Log.d(TAG, "알림이 없습니다.");

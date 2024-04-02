@@ -1,6 +1,7 @@
 package com.jnu_alarm.android.ui.notifications;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,19 @@ import java.util.ArrayList;
 
 public class NotificationsListAdapter extends RecyclerView.Adapter<NotificationsListAdapter.ViewHolder> {
     private ArrayList<NotificationData> mData = null;
+    private OnItemClickListener onItemClickListener; // 클릭 리스너 인터페이스
+
+    // 인터페이스 정의
+    // 인터페이스 정의: 클릭 이벤트 리스너
+    public interface OnItemClickListener {
+        void onItemClick(NotificationData data);
+    }
+
+    // 클릭 리스너 설정 메서드
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        onItemClickListener = listener;
+    }
+
     class ViewHolder extends RecyclerView.ViewHolder {
         TextView titleTextView;
         TextView subTitleTextView;
@@ -23,6 +37,17 @@ public class NotificationsListAdapter extends RecyclerView.Adapter<Notifications
             super(itemView);
             titleTextView = itemView.findViewById(R.id.textTitle);
             subTitleTextView = itemView.findViewById(R.id.textSubTitle);
+
+            // 아이템 클릭 리스너 설정
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION && onItemClickListener != null) {
+                        onItemClickListener.onItemClick(mData.get(position));
+                    }
+                }
+            });
         }
     }
 
