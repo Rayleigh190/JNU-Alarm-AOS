@@ -1,5 +1,6 @@
 package com.jnu_alarm.android.ui.settings;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.navigation.Navigation;
@@ -31,6 +32,12 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
         findPreference("contact").setOnPreferenceClickListener(preference -> {
             Navigation.findNavController(requireView()).navigate(R.id.action_navigation_settings_to_navigation_contact);
+            return true;
+        });
+
+        findPreference("info").setOnPreferenceClickListener(preference -> {
+            Intent intent = new Intent(getContext(), InfoActivity.class);
+            startActivity(intent);
             return true;
         });
     }
