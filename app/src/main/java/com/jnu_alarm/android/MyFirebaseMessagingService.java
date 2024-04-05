@@ -43,7 +43,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // 팝업을 클릭했을 때 MainActivity를 열도록 PendingIntent 설정
         Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, Math.toIntExact(System.currentTimeMillis()), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.mipmap.ic_launcher)
@@ -54,7 +54,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 .setContentIntent(pendingIntent)  // 팝업 클릭 시 실행할 PendingIntent 지정
                 .setAutoCancel(true);  // 팝업을 클릭하면 자동으로 알림을 삭제
 
-        notificationManager.notify(Math.toIntExact(System.currentTimeMillis()), builder.build());
+        notificationManager.notify(0, builder.build());
     }
     
 }

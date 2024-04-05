@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 //                        // Log and toast
 //                        String msg = getString(R.string.msg_token_fmt, token);
 //                        Log.d(TAG, msg);
-                        Toast.makeText(MainActivity.this, "FCM 등록 완료", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(MainActivity.this, "FCM 등록 완료", Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -192,56 +192,23 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     // 설정 값이 변했을 때 실행
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, @Nullable String key) {
-        if (key=="notifications") {return;}
-        Log.v(TAG, "선택한 설정: " + key);
+        if (sharedPreferences==getSharedPreferences("subscribed_topics", Context.MODE_PRIVATE)) {
+            Log.v(TAG, "변경된 설정: " + sharedPreferences);
+            Log.v(TAG, "선택한 키: " + key);
+            return;
+        }
+        Log.v(TAG, "변경된 설정: " + sharedPreferences);
+        Log.v(TAG, "선택한 키: " + key);
         if (key != null && sharedPreferences.getBoolean(key, false)) {
-            FirebaseMessaging.getInstance().subscribeToTopic(key)
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            String msg = "Subscribed";
-                            if (!task.isSuccessful()) {
-                                msg = "Subscribe failed";
-                                sharedPreferences.edit().putBoolean(key, false).apply();
-                            } else {
-                                // 구독한 key를 SharedPreferences에 저장 합니다.
-                                ArrayList subscribedList = getListFromSharedPreferences(getApplicationContext());
-                                subscribedList.add(key);
-                                saveListToSharedPreferences(getApplicationContext(), subscribedList);
-                            }
-                            Log.d(TAG, "전체 설정" + getListFromSharedPreferences(getApplicationContext()).toString());
-                            Log.d(TAG, msg);
-                            Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
-                        }
-                    });
+            subscribeFCMTopic(sharedPreferences, key);
         } else {
-            FirebaseMessaging.getInstance().unsubscribeFromTopic(key)
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            String msg = "Unsubscribed";
-                            if (!task.isSuccessful()) {
-                                msg = "Unsubscribe failed";
-                                sharedPreferences.edit().putBoolean(key, true).apply();
-                            } else {
-                                // 구독 취소한 key를 SharedPreferences에서 제거 합니다.
-                                ArrayList subscribedList = getListFromSharedPreferences(getApplicationContext());
-                                if (subscribedList.contains(key)) {
-                                    subscribedList.remove(key);
-                                }
-                                saveListToSharedPreferences(getApplicationContext(), subscribedList);
-                            }
-                            Log.d(TAG, "전체 설정" + getListFromSharedPreferences(getApplicationContext()).toString());
-                            Log.d(TAG, msg);
-                            Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
-                        }
-                    });
+           unsubscribeFCMTopic(sharedPreferences, key);
         }
     }
 
     // SharedPreferences에 리스트 데이터를 저장하는 메서드
     private void saveListToSharedPreferences(Context context, List<String> myList) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences("notifications", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = context.getSharedPreferences("subscribed_topics", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
         Gson gson = new Gson();
@@ -253,7 +220,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
     // SharedPreferences에서 리스트 데이터를 불러오는 메서드
     private ArrayList<String> getListFromSharedPreferences(Context context) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences("notifications", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = context.getSharedPreferences("subscribed_topics", Context.MODE_PRIVATE);
         String json = sharedPreferences.getString("data", null);
 
         Type type = new TypeToken<List<String>>() {}.getType();
@@ -264,6 +231,55 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             list = new ArrayList<>(); // 기본값으로 빈 ArrayList를 생성
         }
         return list;
+    }
+
+    private void subscribeFCMTopic(SharedPreferences sharedPreferences, String key) {
+
+        FirebaseMessaging.getInstance().subscribeToTopic(key)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        String msg = "구독 완료";
+                        if (!task.isSuccessful()) {
+                            msg = "구독 실패";
+                            sharedPreferences.edit().putBoolean(key, false).apply();
+                        } else {
+                            // 구독한 key를 SharedPreferences에 저장 합니다.
+                            ArrayList subscribedList = getListFromSharedPreferences(getApplicationContext());
+                            subscribedList.add(key);
+                            saveListToSharedPreferences(getApplicationContext(), subscribedList);
+                        }
+                        Log.d(TAG, "전체 설정" + getListFromSharedPreferences(getApplicationContext()).toString());
+                        Log.d(TAG, msg);
+                        if (!key.equals("basic") && !key.equals("aos")) {
+                            Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+
+    private void unsubscribeFCMTopic(SharedPreferences sharedPreferences, String key) {
+        FirebaseMessaging.getInstance().unsubscribeFromTopic(key)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        String msg = "구독 취소";
+                        if (!task.isSuccessful()) {
+                            msg = "구독 취소 실패";
+                            sharedPreferences.edit().putBoolean(key, true).apply();
+                        } else {
+                            // 구독 취소한 key를 SharedPreferences에서 제거 합니다.
+                            ArrayList subscribedList = getListFromSharedPreferences(getApplicationContext());
+                            if (subscribedList.contains(key)) {
+                                subscribedList.remove(key);
+                            }
+                            saveListToSharedPreferences(getApplicationContext(), subscribedList);
+                        }
+                        Log.d(TAG, "전체 설정" + getListFromSharedPreferences(getApplicationContext()).toString());
+                        Log.d(TAG, msg);
+                        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     // [START ask_post_notifications]
@@ -295,4 +311,12 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         }
     }
     // [END ask_post_notifications]
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //리스너 해지
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .unregisterOnSharedPreferenceChangeListener(this);
+    }
 }

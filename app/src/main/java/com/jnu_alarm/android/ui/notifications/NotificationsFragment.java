@@ -146,7 +146,7 @@ public class NotificationsFragment extends Fragment {
 
     // SharedPreferences에서 리스트 데이터를 불러오는 메서드
     private ArrayList<String> getListFromSharedPreferences(Context context) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences("notifications", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = context.getSharedPreferences("subscribed_topics", Context.MODE_PRIVATE);
         String json = sharedPreferences.getString("data", null);
 
         Type type = new TypeToken<List<String>>() {}.getType();
