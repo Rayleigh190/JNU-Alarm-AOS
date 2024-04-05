@@ -1,6 +1,9 @@
 package com.jnu_alarm.android;
 
 import android.Manifest;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -26,6 +29,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
@@ -57,6 +61,18 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         // 알림 권한 요청 Start
         askNotificationPermission();
         // 알림 권한 요청 End
+
+        // 알림 채널 생성 Start
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel notificationChannel = new NotificationChannel("100", "모든 알림", NotificationManager.IMPORTANCE_HIGH);
+            notificationChannel.setShowBadge(true);
+            notificationChannel.enableVibration(true);
+            notificationChannel.enableLights(true);
+            notificationChannel.setLockscreenVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(notificationChannel);
+        }
+        // 알림 채널 생성 End
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
