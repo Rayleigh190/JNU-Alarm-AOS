@@ -1,10 +1,12 @@
 package com.jnu_alarm.android;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -58,6 +60,25 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // 네트워크가 연결되어 있지 않은 경우
+        if (!NetworkManager.checkNetworkState(this)) {
+            // AlertDialog를 통해 사용자에게 네트워크 연결 상태를 알립니다.
+            new AlertDialog.Builder(this, R.style.AlertDialogTheme)
+                    .setTitle("네트워크 연결 확인")
+                    .setMessage("네트워크에 연결되어 있지 않습니다. 앱을 종료합니다.")
+                    .setCancelable(false)
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            // '확인' 버튼을 클릭하면 앱을 종료합니다.
+                            finish();
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+        }
+
         // 알림 권한 요청 Start
         askNotificationPermission();
         // 알림 권한 요청 End
@@ -192,6 +213,27 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     // 설정 값이 변했을 때 실행
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, @Nullable String key) {
+        // 네트워크가 연결되어 있지 않은 경우
+        if (!NetworkManager.checkNetworkState(this)) {
+            // AlertDialog를 통해 사용자에게 네트워크 연결 상태를 알립니다.
+            new AlertDialog.Builder(this, R.style.AlertDialogTheme)
+                    .setTitle("네트워크 연결 확인")
+                    .setMessage("네트워크에 연결되어 있지 않습니다. 연결 후 다시 시도해 주세요.")
+                    .setCancelable(false)
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            sharedPreferences.edit().putBoolean(
+                                    key,
+                                    !sharedPreferences.getBoolean(key, true)
+                            ).apply();
+                            finish();
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+        }
+
         if (sharedPreferences==getSharedPreferences("subscribed_topics", Context.MODE_PRIVATE)) {
             Log.v(TAG, "변경된 설정: " + sharedPreferences);
             Log.v(TAG, "선택한 키: " + key);
@@ -202,7 +244,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         if (key != null && sharedPreferences.getBoolean(key, false)) {
             subscribeFCMTopic(sharedPreferences, key);
         } else {
-           unsubscribeFCMTopic(sharedPreferences, key);
+            unsubscribeFCMTopic(sharedPreferences, key);
         }
     }
 
