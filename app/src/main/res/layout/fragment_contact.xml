@@ -5,12 +5,18 @@
     android:orientation="vertical"
     android:padding="12dp">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="답장이 필요한 연락이면 이메일을 남겨주시기 바랍니다."
+        android:textSize="13sp" />
+
     <EditText
         android:id="@+id/email_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:hint="이메일"
+        android:hint="이메일(선택)"
         android:inputType="textEmailAddress" />
 
     <EditText

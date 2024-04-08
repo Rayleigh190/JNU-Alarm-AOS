@@ -58,7 +58,9 @@ public class ContactFragment extends Fragment {
                 String body = String.valueOf(bodyEditText.getText());
 
                 if (!isEditTextEmpty(getContext(), email, title, body)) {return;}
-                if (!isEmailValid(getContext(), email)) {return;}
+                if (!email.isEmpty()) {
+                    if (!isEmailValid(getContext(), email)) {return;}
+                }
 
                 Log.d(TAG, "이메일: " + email);
                 Log.d(TAG, "제목: " + title);
@@ -72,7 +74,7 @@ public class ContactFragment extends Fragment {
     }
 
     Boolean isEditTextEmpty(Context context, String email, String title, String body) {
-        if (email.isEmpty() || title.isEmpty() || body.isEmpty()) {
+        if (title.isEmpty() || body.isEmpty()) {
             Toast.makeText(context,"입력하지 않은 내용이 있습니다.", Toast.LENGTH_SHORT).show();
             return false;
         }
