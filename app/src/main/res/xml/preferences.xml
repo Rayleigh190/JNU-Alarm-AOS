@@ -68,7 +68,10 @@
             android:icon="@drawable/setting_ic_round_info_24"/>
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="개발자 모드">
+    <PreferenceCategory android:title="개발자 모드"
+        app:key="dev"
+        android:enabled="false"
+        app:isPreferenceVisible="false">
         <SwitchPreferenceCompat
             app:key="test"
             app:title="테스트 알림"

@@ -4,8 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.navigation.Navigation;
+import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
+import com.jnu_alarm.android.BuildConfig;
 import com.jnu_alarm.android.R;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
@@ -40,5 +42,12 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             startActivity(intent);
             return true;
         });
+
+        // 디버그 모드에서만 개발자 모드 활성화
+        if (BuildConfig.DEBUG) {
+            Preference devModePreference = findPreference("dev");
+            devModePreference.setEnabled(true);
+            devModePreference.setVisible(true);
+        }
     }
 }
