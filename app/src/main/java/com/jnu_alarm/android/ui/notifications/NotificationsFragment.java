@@ -17,7 +17,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
-import com.jnu_alarm.android.MainActivity;
 import com.jnu_alarm.android.R;
 import com.jnu_alarm.android.WebActivity;
 import com.jnu_alarm.android.api.ApiClient;
@@ -92,7 +91,7 @@ public class NotificationsFragment extends Fragment {
         apiService = ApiClient.getClient().create(ApiService.class);
 
         // 예시 데이터 생성
-        String deviceId = "001";
+        String deviceId = getUUID();
         List<String> subscribedTopics = getListFromSharedPreferences(getContext());
         SubscriptionData subscriptionData = new SubscriptionData(deviceId, subscribedTopics);
 
@@ -157,5 +156,12 @@ public class NotificationsFragment extends Fragment {
             list = new ArrayList<>(); // 기본값으로 빈 ArrayList를 생성
         }
         return list;
+    }
+
+
+    // UUID 조회
+    private String getUUID(){
+        SharedPreferences mPref = getContext().getSharedPreferences("agree", Context.MODE_PRIVATE);
+        return mPref.getString("uuid", "001");
     }
 }

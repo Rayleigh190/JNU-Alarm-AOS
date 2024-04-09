@@ -16,6 +16,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.util.UUID;
+
 public class AgreeActivity extends AppCompatActivity {
 
     @Override
@@ -78,6 +80,8 @@ public class AgreeActivity extends AppCompatActivity {
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putBoolean("terms_of_service", true).apply();
 
+                initUUID();
+
                 Intent intent = new Intent(AgreeActivity.this, MainActivity.class);
 
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -95,5 +99,15 @@ public class AgreeActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    // UUID 초기화
+    private void initUUID() {
+        SharedPreferences mPref = getSharedPreferences("agree", MODE_PRIVATE);
+        String uuid = mPref.getString("uuid", null);
+        if(uuid == null){
+            uuid = UUID.randomUUID().toString();
+            mPref.edit().putString("uuid", uuid).apply();
+        }
     }
 }
