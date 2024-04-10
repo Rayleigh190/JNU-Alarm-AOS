@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -16,10 +17,14 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import java.util.UUID;
 
 public class AgreeActivity extends AppCompatActivity {
-
+    // [START declare_analytics]
+    private FirebaseAnalytics mFirebaseAnalytics;
+    // [END declare_analytics]
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +35,16 @@ public class AgreeActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        // [START shared_app_measurement]
+        // Obtain the FirebaseAnalytics instance.
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        if (BuildConfig.DEBUG) {
+            mFirebaseAnalytics.setAnalyticsCollectionEnabled(false);
+        } else {
+            mFirebaseAnalytics.setAnalyticsCollectionEnabled(true);
+        }
+        // [END shared_app_measurement]
 
         // 이용약관 동의 했는지 확인
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("agree", Context.MODE_PRIVATE);

@@ -60,6 +60,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         // 네트워크가 연결되어 있지 않은 경우
         if (!NetworkManager.checkNetworkState(this)) {
@@ -94,9 +96,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             manager.createNotificationChannel(notificationChannel);
         }
         // 알림 채널 생성 End
-
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
