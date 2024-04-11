@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -45,6 +46,9 @@ public class AgreeActivity extends AppCompatActivity {
             mFirebaseAnalytics.setAnalyticsCollectionEnabled(true);
         }
         // [END shared_app_measurement]
+
+        // 다크모드 금지
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
         // 이용약관 동의 했는지 확인
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("agree", Context.MODE_PRIVATE);
