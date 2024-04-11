@@ -37,6 +37,10 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            resValue("string", "adUnitId", "ca-app-pub-4183402691727093/6476970284")
+        }
+        debug {
+            resValue("string", "adUnitId", "ca-app-pub-3940256099942544/9214589741")
         }
     }
     compileOptions {
