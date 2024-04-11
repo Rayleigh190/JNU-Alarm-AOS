@@ -13,6 +13,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.ads.AdListener;
@@ -191,6 +192,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
             public void onAdLoaded() {
                 // Code to be executed when an ad finishes loading.
                 Log.d(TAG, "배너광고가 로드 되었습니다.");
+                ImageView backgroundBannerImage = findViewById(R.id.backgroud_banner);
+                backgroundBannerImage.setVisibility(View.GONE);
             }
 
             @Override

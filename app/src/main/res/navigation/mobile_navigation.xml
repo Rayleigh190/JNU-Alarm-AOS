@@ -14,7 +14,7 @@
     <fragment
         android:id="@+id/navigation_settings"
         android:name="com.jnu_alarm.android.ui.settings.SettingsFragment"
-        android:label="알림 설정"
+        android:label="설정"
         tools:layout="@layout/fragment_settings" >
         <action
             android:id="@+id/action_navigation_settings_to_navigation_colleges"
