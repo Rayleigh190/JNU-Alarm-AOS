@@ -30,6 +30,16 @@ android {
         buildConfigField("String", "BASE_URL", getLocalProperty("BASE_URL"))
     }
 
+    // release 모드 빌드 설정
+    signingConfigs {
+        create("release") {
+            storeFile = file(getLocalProperty("keystore"))
+            storePassword = getLocalProperty("keystore_pass")
+            keyAlias = getLocalProperty("key_alias")
+            keyPassword = getLocalProperty("key_pass")
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -37,9 +47,13 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            // admob 배너 광고 ID 설정 (서비스용)
             resValue("string", "adUnitId", "ca-app-pub-4183402691727093/6476970284")
+            // release 모드 빌드 설정
+            signingConfig = signingConfigs.getByName("release")
         }
         debug {
+            // admob 배너 광고 ID 설정 (테스트용)
             resValue("string", "adUnitId", "ca-app-pub-3940256099942544/9214589741")
         }
     }
