@@ -7,6 +7,8 @@ plugins {
     id("com.google.gms.google-services")
     // Add the Crashlytics Gradle plugin
     id("com.google.firebase.crashlytics")
+    // Add the Performance Monitoring Gradle plugin
+    id("com.google.firebase.firebase-perf")
 }
 
 fun getLocalProperty(propertyName: String): String {
@@ -92,6 +94,7 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-messaging-ktx")
     implementation("com.google.firebase:firebase-crashlytics")
+    implementation("com.google.firebase:firebase-perf")
 
     // retrofit
     implementation("com.squareup.retrofit2:retrofit:2.10.0")
