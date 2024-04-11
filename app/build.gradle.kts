@@ -5,6 +5,8 @@ plugins {
     alias(libs.plugins.androidApplication)
     // Add the Google services Gradle plugin
     id("com.google.gms.google-services")
+    // Add the Crashlytics Gradle plugin
+    id("com.google.firebase.crashlytics")
 }
 
 fun getLocalProperty(propertyName: String): String {
@@ -89,6 +91,7 @@ dependencies {
     // When using the BoM, don't specify versions in Firebase dependencies
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-messaging-ktx")
+    implementation("com.google.firebase:firebase-crashlytics")
 
     // retrofit
     implementation("com.squareup.retrofit2:retrofit:2.10.0")
