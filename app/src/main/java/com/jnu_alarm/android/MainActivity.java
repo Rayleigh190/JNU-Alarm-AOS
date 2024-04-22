@@ -44,12 +44,18 @@ import androidx.preference.PreferenceManager;
 import com.google.common.reflect.TypeToken;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
+import com.jnu_alarm.android.api.ApiClient;
 import com.jnu_alarm.android.api.ApiService;
+import com.jnu_alarm.android.api.response.AppInfoApiResponse;
 import com.jnu_alarm.android.databinding.ActivityMainBinding;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String TAG = "MainActivity";
@@ -81,6 +87,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
         }
+
+        latestVersionCheck();
 
         // 알림 권한 요청 Start
         askNotificationPermission();
@@ -362,5 +370,35 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         //리스너 해지
         PreferenceManager.getDefaultSharedPreferences(this)
                 .unregisterOnSharedPreferenceChangeListener(this);
+    }
+
+    private void latestVersionCheck() {
+        fetchAppInfo();
+    }
+
+    private void fetchAppInfo() {
+        ApiService apiService = ApiClient.getClient().create(ApiService.class);
+        Call<AppInfoApiResponse> call = apiService.getAppInfo();
+
+        call.enqueue(new Callback<AppInfoApiResponse>() {
+            @Override
+            public void onResponse(Call<AppInfoApiResponse> call, Response<AppInfoApiResponse> response) {
+                if (response.isSuccessful()) {
+                    AppInfoApiResponse appInfoResponse = response.body();
+                    // 성공적인 응답 처리
+                    // appInfoResponse.getResponseData()를 사용하여 앱 정보 데이터에 액세스합니다.
+                    String version = appInfoResponse.getResponseData().getAosLatestVersion();
+                    Log.d(TAG, version);
+                } else {
+                    // 실패한 응답 처리
+                    // response.errorBody()를 사용하여 에러 메시지에 액세스합니다.
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AppInfoApiResponse> call, Throwable t) {
+                // 실패 처리
+            }
+        });
     }
 }
