@@ -7,8 +7,10 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -51,6 +53,8 @@ import com.jnu_alarm.android.databinding.ActivityMainBinding;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 import retrofit2.Call;
@@ -64,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     private AppBarConfiguration appBarConfiguration;
     private ApiService apiService;
     private AdView bottomAdView;
+    private static final String PREF_KEY_LAST_UPDATE_DIALOG_SHOWN = "last_update_dialog_shown";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,8 +92,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
         }
-
-        latestVersionCheck();
 
         // 알림 권한 요청 Start
         askNotificationPermission();
@@ -157,6 +160,12 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 });
 
         setAdmob();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        latestVersionCheck();
     }
 
     public Void setAdmob() {
@@ -243,7 +252,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
         }
-
+        if(key == PREF_KEY_LAST_UPDATE_DIALOG_SHOWN) {return;}
         if (sharedPreferences==getSharedPreferences("subscribed_topics", Context.MODE_PRIVATE)) {
             Log.v(TAG, "변경된 설정: " + sharedPreferences);
             Log.v(TAG, "선택한 키: " + key);
@@ -387,11 +396,27 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                     AppInfoApiResponse appInfoResponse = response.body();
                     // 성공적인 응답 처리
                     // appInfoResponse.getResponseData()를 사용하여 앱 정보 데이터에 액세스합니다.
-                    String version = appInfoResponse.getResponseData().getAosLatestVersion();
-                    Log.d(TAG, version);
+                    String latestVersion = appInfoResponse.getResponseData().getAosLatestVersion();
+                    String currentVersion = BuildConfig.VERSION_NAME;
+                    String[] splitedLatestVersion = latestVersion.split("\\.");
+                    String[] splitedCurrentVersion = currentVersion.split("\\.");
+                    Log.d(TAG, Arrays.toString(splitedLatestVersion));
+                    Log.d(TAG, Arrays.toString(splitedCurrentVersion));
+                    if(Integer.parseInt(splitedLatestVersion[0]) > Integer.parseInt(splitedCurrentVersion[0])
+                    || (Integer.parseInt(splitedLatestVersion[1]) > Integer.parseInt(splitedCurrentVersion[1]))) {
+                        Log.d(TAG, "강제 업데이트 대상");
+                        showForceUpdateDialog();
+                    } else if (Integer.parseInt(splitedLatestVersion[2]) > Integer.parseInt(splitedCurrentVersion[2])) {
+                        Log.d(TAG, "권장 업데이트 대상");
+                        showRecommendUpdateDialog();
+                    } else {
+                        Log.d(TAG, "아무것도 아님 대상");
+                    }
+
                 } else {
                     // 실패한 응답 처리
                     // response.errorBody()를 사용하여 에러 메시지에 액세스합니다.
+                    Log.d(TAG, "AppInfoApi 실패");
                 }
             }
 
@@ -400,5 +425,62 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 // 실패 처리
             }
         });
+    }
+
+    private void showForceUpdateDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AlertDialogTheme);
+        builder.setTitle("필수 업데이트 알림");
+        builder.setMessage("더 나은 서비스를 위해 새 버전이 나왔습니다! 업데이트를 해주세요.");
+        builder.setCancelable(false);
+        builder.setPositiveButton("업데이트", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // 업데이트 다이얼로그에서 업데이트 버튼을 클릭한 경우 Play Store로 이동하여 앱 업데이트를 시작합니다.
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + getPackageName()));
+                startActivity(intent);
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void showRecommendUpdateDialog() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        long lastShownTime = sharedPreferences.getLong(PREF_KEY_LAST_UPDATE_DIALOG_SHOWN, 0);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(lastShownTime);
+
+        // 마지막으로 알림을 표시한 시간이 00:00 이후인지 확인
+        if (!isSameDay(calendar, Calendar.getInstance())) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AlertDialogTheme);
+            builder.setTitle("권장 업데이트 알림");
+            builder.setMessage("안정적인 서비스 이용을 위해 업데이트를 권장합니다!");
+            builder.setCancelable(false);
+            builder.setPositiveButton("업데이트", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // 업데이트 다이얼로그에서 업데이트 버튼을 클릭한 경우 Play Store로 이동하여 앱 업데이트를 시작합니다.
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + getPackageName()));
+                    startActivity(intent);
+                }
+            });
+            builder.setNegativeButton("나중에", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // 나중에 버튼을 클릭한 경우 다이얼로그를 닫고 마지막으로 알림을 표시한 시간을 저장합니다.
+                    sharedPreferences.edit().putLong(PREF_KEY_LAST_UPDATE_DIALOG_SHOWN, System.currentTimeMillis()).apply();
+                    dialog.dismiss();
+                }
+            });
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
+    }
+
+    // 두 Calendar 객체가 같은 날인지 확인하는 메서드
+    private boolean isSameDay(Calendar cal1, Calendar cal2) {
+        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+                cal1.get(Calendar.MONTH) == cal2.get(Calendar.MONTH) &&
+                cal1.get(Calendar.DAY_OF_MONTH) == cal2.get(Calendar.DAY_OF_MONTH);
     }
 }
