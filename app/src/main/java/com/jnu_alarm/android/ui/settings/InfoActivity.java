@@ -22,6 +22,7 @@ public class InfoActivity extends AppCompatActivity {
     LinearLayout upDateHistoryLayout;
     LinearLayout privacyPolicyLayout;
     LinearLayout homepageLayout;
+    LinearLayout supportLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +62,14 @@ public class InfoActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 openWebView("공식페이지", "https://wackitlab.notion.site/469d2c23433c48cca6965c3573058397");
+            }
+        });
+
+        supportLayout = findViewById(R.id.support_layout);
+        supportLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openWebView("후원하기", "https://wackitlab.notion.site/1c5a516070804fa5a0dd30d43a486979");
             }
         });
     }
