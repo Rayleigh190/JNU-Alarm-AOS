@@ -13,6 +13,8 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PowerManager;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -109,6 +111,17 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         }
         // 알림 채널 생성 End
 
+        // 배터리 최적화 권한이 허용되어 있는지 확인
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+            if (powerManager.isIgnoringBatteryOptimizations(getPackageName()) == false) {
+                Log.d(TAG, "배터리 최적화 제외 허용 안 됨");
+                requestBatteryOptimizationPermission();
+            } else {
+                Log.d(TAG, "배터리 최적화 허용 됨");
+            }
+        }
+
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
@@ -169,6 +182,25 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 });
 
         setAdmob();
+    }
+
+    private void requestBatteryOptimizationPermission() {
+        new AlertDialog.Builder(this, R.style.AlertDialogTheme)
+                .setTitle("배터리 설정")
+                .setMessage("정상적인 알림 수신을 위해 해당 어플을 \"배터리 사용량 최적화\" 목록에서 \"제외\"해야 합니다.\n\n[확인] 버튼을 누른 후 시스템 알림 대화 상자가 뜨면 [허용]을 선택해 주세요.")
+                .setCancelable(false)
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        // '확인' 버튼을 클릭하면 앱을 종료합니다.
+                        Intent intent = new Intent();
+                        intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                        intent.setData(Uri.parse("package:" + getPackageName()));
+                        startActivity(intent);
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 
     @Override
