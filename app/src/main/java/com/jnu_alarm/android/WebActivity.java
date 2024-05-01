@@ -106,6 +106,8 @@ public class WebActivity extends AppCompatActivity {
             Uri uri = Uri.parse(currentUrl);
             openBrowserIntent.setData(uri);
             startActivity(openBrowserIntent);
+        } else if (itemId == R.id.reload_menu) {
+            webView.reload();
         }
         return super.onOptionsItemSelected(item);
     }
