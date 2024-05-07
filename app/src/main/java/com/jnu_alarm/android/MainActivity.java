@@ -152,14 +152,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
 
-        // 첫 실행 때는 설정 화면으로 이동하도록 합니다.
-        boolean isFirstRun = sharedPreferences.getBoolean("first_run", true);
-        // 첫 번째 실행이라면 설정 화면으로 이동
-        if (isFirstRun) {
-            navigateToSettingsScreen();
-            // 첫 번째 실행이 아님을 나타내는 플래그를 설정
-            sharedPreferences.edit().putBoolean("first_run", false).apply();
-        }
 
         // FCM 등록
         FirebaseMessaging.getInstance().getToken()
@@ -293,7 +285,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
         }
-        if(key == PREF_KEY_LAST_UPDATE_DIALOG_SHOWN || key == "first_run") {return;} // 무시하고 넘어가야 하는 key들 입니다.
+        if(key == PREF_KEY_LAST_UPDATE_DIALOG_SHOWN) {return;} // 무시하고 넘어가야 하는 key들 입니다.
         if (sharedPreferences==getSharedPreferences("subscribed_topics", Context.MODE_PRIVATE)) {
             Log.v(TAG, "변경된 설정: " + sharedPreferences);
             Log.v(TAG, "선택한 키: " + key);
@@ -525,8 +517,4 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                 cal1.get(Calendar.DAY_OF_MONTH) == cal2.get(Calendar.DAY_OF_MONTH);
     }
 
-    private void navigateToSettingsScreen() {
-        // 설정 화면으로 이동
-        navController.navigate(R.id.navigation_settings);
-    }
 }
