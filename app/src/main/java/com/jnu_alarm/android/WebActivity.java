@@ -6,8 +6,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -56,6 +58,38 @@ public class WebActivity extends AppCompatActivity {
         webSettings.setLoadWithOverviewMode(true);
         webSettings.setUseWideViewPort(true);
         webSettings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW); // http 이미지 안 뜨는 문제 해결
+
+        // WebView와 설정(webSettings)을 초기화한 후에
+        // WebView에서 JavaScript 호출을 처리할 클래스 정의
+        class WebViewJavaScriptInterface {
+            @JavascriptInterface
+            public void hideElement() {
+                // JavaScript를 통해 버튼을 숨기는 메서드
+                webView.post(() -> {
+                    // 클래스 이름으로 요소를 찾아 숨깁니다
+                    webView.evaluateJavascript(
+                            "var elements = document.getElementsByClassName('btn-deco color2');" +
+                                    "if (elements.length > 0) {" +
+                                    "   elements[0].style.display = 'none';" + // 첫 번째 일치하는 요소 숨기기
+                                    "}",
+                            null);
+                });
+            }
+        }
+
+        // WebView에 JavaScript 인터페이스 추가
+        webView.addJavascriptInterface(new WebViewJavaScriptInterface(), "Android");
+
+        // WebViewClient를 설정하여 페이지 로딩 완료 이벤트를 감지
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                // JavaScript 인터페이스 메서드를 호출하여 버튼 숨기기
+                webView.loadUrl("javascript:window.Android.hideElement()");
+            }
+        });
+
 
         // 뒤로가기 동작을 처리하는 콜백 등록
         OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
