@@ -26,22 +26,29 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
+        // 포그라운드 상태에서 메세지를 받았을때 실행 되는 함수 입니다.
         Log.d(TAG, "Received message: " + remoteMessage);
 
         // 알림 표시
         if (remoteMessage.getNotification() != null) {
             String title = remoteMessage.getNotification().getTitle();
             String body = remoteMessage.getNotification().getBody();
-            showNotification(title, body);
+            String link = String.valueOf(remoteMessage.getData().get("link"));
+            Log.d(TAG, "Received link: " + link);
+            showNotification(title, body, link);
         }
     }
 
-    private void showNotification(String title, String body) {
+    private void showNotification(String title, String body, String link) {
         // 팝업 알림 띄우기
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        // 팝업을 클릭했을 때 MainActivity를 열도록 PendingIntent 설정
-        Intent intent = new Intent(this, MainActivity.class);
+        // 알림을 클릭했을 때 실행할 Intent를 설정합니다.
+        Intent intent = new Intent(this, AgreeActivity.class);
+
+        intent.putExtra("title", title); // 제목 데이터 전달 예시
+        intent.putExtra("link", link);   // 내용 데이터 전달 예시
+
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_IMMUTABLE);
 

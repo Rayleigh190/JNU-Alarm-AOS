@@ -118,6 +118,17 @@ public class AgreeActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        // 푸시 알림 클릭하면 바로 웹뷰로 열리도록 합니다.
+        if (getIntent().getExtras() != null) {
+            String title = getIntent().getStringExtra("title");
+            String link = getIntent().getStringExtra("link");
+
+            Intent intent = new Intent(getApplicationContext(), WebActivity.class);
+            intent.putExtra("link", link);
+            intent.putExtra("title", title);
+            startActivity(intent);
+        }
     }
 
     // UUID 초기화
