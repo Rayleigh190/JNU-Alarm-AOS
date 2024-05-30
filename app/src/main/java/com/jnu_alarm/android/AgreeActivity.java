@@ -120,7 +120,7 @@ public class AgreeActivity extends AppCompatActivity {
         });
 
         // 푸시 알림 클릭하면 바로 웹뷰로 열리도록 합니다.
-        if (getIntent().getExtras() != null) {
+        if (getIntent().getStringExtra("link") != null) {
             String title = getIntent().getStringExtra("title");
             String link = getIntent().getStringExtra("link");
 
