@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.JavascriptInterface;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -20,6 +21,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.jnu_alarm.android.utils.ClipboardUtil;
+
+import java.net.URISyntaxException;
 
 public class WebActivity extends AppCompatActivity {
     private static final String TAG = "WebActivity";
@@ -87,6 +90,25 @@ public class WebActivity extends AppCompatActivity {
                 super.onPageFinished(view, url);
                 // JavaScript 인터페이스 메서드를 호출하여 버튼 숨기기
                 webView.loadUrl("javascript:window.Android.hideElement()");
+            }
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                Uri uri = request.getUrl();
+                String url = uri.toString();
+
+                if (url.contains("kakao") || url.contains("market://") || url.contains("intent://")) {
+                    // kakao or market or intent가 포함된 주소는 새로운 Intent로 연결합니다.
+                    try {
+                        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                        startActivity(intent);
+                    } catch (Exception e) {
+                        Toast.makeText(WebActivity.this, "지원하지 않는 링크입니다.", Toast.LENGTH_SHORT).show();
+                        e.printStackTrace();
+                    }
+                    return true; // URL 로딩 중지
+                }
+                return false; // 계속 URL 로딩
             }
         });
 
