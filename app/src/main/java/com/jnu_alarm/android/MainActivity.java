@@ -485,6 +485,11 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
         // 마지막으로 알림을 표시한 시간이 00:00 이후인지 확인
         if (!isSameDay(calendar, Calendar.getInstance())) {
+            // 액티비티가 종료되었거나 종료 중인지 확인
+            if (isFinishing() || isDestroyed()) {
+                return;
+            }
+
             AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AlertDialogTheme);
             builder.setTitle("권장 업데이트 알림");
             builder.setMessage("안정적인 서비스 이용을 위해 업데이트를 권장합니다!");
