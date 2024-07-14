@@ -36,8 +36,6 @@
         <SwitchPreferenceCompat
             app:key="ie"
             app:title="산업공학과"
-            android:summary="서비스 준비중입니다."
-            android:enabled="false"
             android:icon="@drawable/setting_ic_round_local_library_24"/>
         <SwitchPreferenceCompat
             app:key="bte"
@@ -58,6 +56,10 @@
         <SwitchPreferenceCompat
             app:key="elec"
             app:title="전기공학과"
+            android:icon="@drawable/setting_ic_round_local_library_24"/>
+        <SwitchPreferenceCompat
+            app:key="eceng"
+            app:title="전자컴퓨터공학부"
             android:icon="@drawable/setting_ic_round_local_library_24"/>
         <SwitchPreferenceCompat
             app:key="ee"

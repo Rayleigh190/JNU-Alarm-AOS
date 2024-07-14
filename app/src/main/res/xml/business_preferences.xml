@@ -10,5 +10,9 @@
         app:key="aicoss"
         app:title="인공지능혁신융합대학사업단"
         android:icon="@drawable/setting_ic_round_business_24" />
+    <SwitchPreferenceCompat
+        app:key="nccoss"
+        app:title="차세대통신혁신융합대학사업단"
+        android:icon="@drawable/setting_ic_round_business_24" />
 
 </androidx.preference.PreferenceScreen>
