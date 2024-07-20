@@ -429,6 +429,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                     AppInfoApiResponse appInfoResponse = response.body();
                     // 성공적인 응답 처리
                     // appInfoResponse.getResponseData()를 사용하여 앱 정보 데이터에 액세스합니다.
+                    if (!appInfoResponse.getResponseData().getIsAvailable()) { return; }
                     String latestVersion = appInfoResponse.getResponseData().getAosLatestVersion();
                     String currentVersion = BuildConfig.VERSION_NAME;
                     String[] splitedLatestVersion = latestVersion.split("\\.");

@@ -9,11 +9,18 @@ public class AppInfoData {
     @SerializedName("aos_latest_version")
     private String aosLatestVersion;
 
+    @SerializedName("is_available")
+    private Boolean isAvailable;
+
     public String getIosLatestVersion() {
         return iosLatestVersion;
     }
 
     public String getAosLatestVersion() {
         return aosLatestVersion;
+    }
+
+    public  Boolean getIsAvailable() {
+        return  isAvailable;
     }
 }
