@@ -67,7 +67,7 @@
 
         <Preference
             android:key="PUSH"
-            android:title="푸시 알림 요청하기"
+            android:title="광고 및 알림 요청"
             android:icon="@drawable/setting_ic_baseline_add_comment_24"/>
 
         <Preference
