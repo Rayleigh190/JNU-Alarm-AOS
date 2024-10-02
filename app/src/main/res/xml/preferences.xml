@@ -71,6 +71,11 @@
             android:icon="@drawable/setting_ic_baseline_add_comment_24"/>
 
         <Preference
+            android:key="sponsor"
+            android:title="후원하기"
+            android:icon="@drawable/setting_ic_baseline_card_giftcard_24"/>
+
+        <Preference
             android:key="FAQ"
             android:title="FAQ"
             android:icon="@drawable/setting_ic_round_help_24"/>

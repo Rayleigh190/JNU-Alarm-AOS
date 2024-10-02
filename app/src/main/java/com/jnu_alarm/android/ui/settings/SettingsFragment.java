@@ -47,6 +47,14 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             return true;
         });
 
+        findPreference("sponsor").setOnPreferenceClickListener(preference -> {
+            Intent intent = new Intent(getContext(), WebActivity.class);
+            intent.putExtra("link", "https://wackitlab.notion.site/1c5a516070804fa5a0dd30d43a486979");
+            intent.putExtra("title", "후원하기");
+            startActivity(intent);
+            return true;
+        });
+
         findPreference("FAQ").setOnPreferenceClickListener(preference -> {
             Intent intent = new Intent(getContext(), WebActivity.class);
             intent.putExtra("link", "https://wackitlab.notion.site/FAQ-b0f2438e25574315baa0962d1dd250e5");
