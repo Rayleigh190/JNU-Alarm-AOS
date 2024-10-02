@@ -97,7 +97,7 @@ public class WebActivity extends AppCompatActivity {
                 Uri uri = request.getUrl();
                 String url = uri.toString();
 
-                if (url.contains("kakao") || url.contains("market://") || url.contains("intent://")) {
+                if (url.contains("kakao") || url.contains("market://") || url.contains("intent://") || url.contains("https://play.google.com/store/")) {
                     // kakao or market or intent가 포함된 주소는 새로운 Intent로 연결합니다.
                     try {
                         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
