@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <SwitchPreferenceCompat
+        app:key="mba"
+        app:title="경영전문대학원"
+        android:icon="@drawable/setting_ic_round_auto_fix_high_24" />
+    <SwitchPreferenceCompat
+        app:key="culture"
+        app:title="문화전문대학원"
+        android:icon="@drawable/setting_ic_round_auto_fix_high_24" />
+    <SwitchPreferenceCompat
+        app:key="dent"
+        app:title="치의학전문대학원"
+        android:icon="@drawable/setting_ic_round_auto_fix_high_24" />
+    <SwitchPreferenceCompat
+        app:key="lawschool"
+        app:title="법학전문대학원"
+        android:icon="@drawable/setting_ic_round_auto_fix_high_24" />
+    <SwitchPreferenceCompat
+        app:key="ds"
+        app:title="데이터사이언스대학원"
+        android:icon="@drawable/setting_ic_round_auto_fix_high_24" />
+
+</androidx.preference.PreferenceScreen>

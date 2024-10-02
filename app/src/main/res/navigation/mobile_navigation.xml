@@ -23,6 +23,9 @@
             android:id="@+id/action_navigation_settings_to_navigation_departments"
             app:destination="@id/navigation_departments" />
         <action
+            android:id="@+id/action_navigation_settings_to_navigation_sgschools"
+            app:destination="@id/navigation_sgschools" />
+        <action
             android:id="@+id/action_navigation_settings_to_navigation_business"
             app:destination="@id/navigation_business" />
         <action
@@ -41,6 +44,12 @@
         android:name="com.jnu_alarm.android.ui.settings.DepartmentsFragment"
         android:label="학과 알림"
         tools:layout="@layout/fragment_departments" />
+
+    <fragment
+        android:id="@+id/navigation_sgschools"
+        android:name="com.jnu_alarm.android.ui.settings.SGSchoolsFragment"
+        android:label="전문대학원 알림"
+        tools:layout="@layout/fragment_sgschools" />
 
     <fragment
         android:id="@+id/navigation_business"

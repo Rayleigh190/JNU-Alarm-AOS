@@ -29,6 +29,11 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             return true;
         });
 
+        findPreference("sgschool").setOnPreferenceClickListener(preference -> {
+            Navigation.findNavController(requireView()).navigate(R.id.action_navigation_settings_to_navigation_sgschools);
+            return true;
+        });
+
         findPreference("business").setOnPreferenceClickListener(preference -> {
             Navigation.findNavController(requireView()).navigate(R.id.action_navigation_settings_to_navigation_business);
             return true;
