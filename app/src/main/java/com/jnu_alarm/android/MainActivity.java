@@ -462,6 +462,9 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     }
 
     private void showForceUpdateDialog() {
+        if (isFinishing() || isDestroyed()) {
+            return;
+        }
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AlertDialogTheme);
         builder.setTitle("필수 업데이트 알림");
         builder.setMessage("더 나은 서비스를 위해 새 버전이 나왔습니다! 업데이트를 해주세요.");
