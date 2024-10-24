@@ -26,8 +26,8 @@ android {
         applicationId = "com.jnu_alarm.android"
         minSdk = 24
         targetSdk = 34
-        versionCode = 10
-        versionName = "1.2.0"
+        versionCode = 11
+        versionName = "1.2.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
